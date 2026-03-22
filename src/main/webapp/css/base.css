@@ -1,0 +1,58 @@
+
+    a {
+       text-decoration : none;
+       color: inherit; 
+    }
+    
+    table {
+       width: 100%;
+       border: 1px solid #111111;
+       border-collapse: collapse;
+    }
+      
+    .tdStyle1 {
+       padding: 12px 16px;
+       text-align: left;
+       border-bottom: 1px solid #ddd;
+       font-size: 20px;
+    }
+      
+    th {
+       padding: 12px 16px;
+       text-align: left;
+       font-size: 20px;
+       background-color: #0000CC;
+       color: #fff;
+       border: 0px solid #dddddd; 
+    }
+      
+      
+    td:not(.tdStyle1) {
+       border: 1px solid #dddddd;
+       padding: 10px;
+       font-size: 20px;
+    }
+     
+     
+    input {
+       height: 2.2em;
+       line-height: 2.2em;
+    }
+      
+      
+    select {
+       height: 1.7em;
+       line-height: 1.7em;
+    }
+      
+      
+    button {
+       cursor:pointer;
+    	  border:1px solid #111111;
+    	  padding:7px 7px 7px 7px;
+    	  background-color:#FFFFFF;
+    	  white-space:nowrap;
+    }
+     
+     
+

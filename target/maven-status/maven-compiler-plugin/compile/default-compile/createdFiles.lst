@@ -1,0 +1,8 @@
+com\test\ggh\util\PaginationInfo.class
+com\test\ggh\controller\SaleMngController.class
+com\test\ggh\MainApplication.class
+com\test\ggh\dao\SaleMngDAO.class
+com\test\ggh\service\impl\SaleMngServiceImpl.class
+com\test\ggh\service\SaleMngService.class
+com\test\ggh\config\ApplicationConfig.class
+com\test\ggh\config\DataConfig.class

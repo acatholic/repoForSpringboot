@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.ggh.dao.SaleMngDAO">
+
+
+
+ <!-- [SaleMng_SQL.xml][selectSaleMng] [SALE_MNG select one][ggh][2026. 03. 22.] -->
+  <select id="selectSaleMng"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+     SELECT  /* [SaleMng_SQL.xml][selectSaleMng] */
+        TO_CHAR(SALE_DATE  , 'MM/DD/YYYY') AS SALE_DATE ,
+        SALE_SITE,
+        SALE_ITEM,
+        SALE_AMT,
+        SALE_MANAGER,
+        TO_CHAR(SALE_REG_DATE  , 'MM/DD/YYYY') AS SALE_REG_DATE 
+     FROM SALE_MNG A
+     WHERE 1 = 1
+    <if test="saleDate != null and saleDate != ''"> 
+     AND  TO_CHAR(SALE_DATE, 'MMDDYYYY') = REPLACE(#{saleDate},'/','') 
+    </if>
+    <if test="saleSite != null and saleSite!= ''"> 
+     AND  SALE_SITE = #{saleSite} 
+    </if>
+    <if test="saleItem != null and saleItem!= ''"> 
+     AND  SALE_ITEM = #{saleItem} 
+    </if>
+    <if test="saleAmt != null and saleAmt!= ''"> 
+     AND  SALE_AMT = #{saleAmt} 
+    </if>
+    <if test="saleManager != null and saleManager!= ''"> 
+     AND  SALE_MANAGER = #{saleManager} 
+    </if>
+    <if test="saleRegDate != null and saleRegDate != ''"> 
+     AND  TO_CHAR(SALE_REG_DATE, 'MMDDYYYY') = REPLACE(#{saleRegDate},'/','') 
+    </if>
+  </select> 
+
+
+ <!-- [SaleMng_SQL.xml][selectSaleMngList] [SALE_MNG select list][ggh][2026. 03. 22.] -->
+  <select id="selectSaleMngList" parameterType="java.util.HashMap" resultType="java.util.HashMap"> 
+     SELECT /* [SaleMng_SQL.xml][selectSaleMngList] */
+        AAA.RNUM,
+        AAA.NEW_RNUM,
+        AAA.SALE_DATE,
+        AAA.SALE_SITE,
+        AAA.SALE_ITEM,
+        AAA.SALE_AMT,
+        AAA.SALE_MANAGER,
+        AAA.SALE_REG_DATE
+     FROM 
+     ( 
+        SELECT 
+           AA.RNUM ,
+           ROWNUM AS NEW_RNUM ,
+           AA.SALE_DATE,
+           AA.SALE_SITE,
+           AA.SALE_ITEM,
+           AA.SALE_AMT,
+           AA.SALE_MANAGER,
+           AA.SALE_REG_DATE
+        FROM 
+        ( 
+           SELECT 
+              ROWNUM  RNUM , 
+              TO_CHAR(A.SALE_DATE  , 'MM/DD/YYYY') AS SALE_DATE,
+              A.SALE_SITE,
+              A.SALE_ITEM,
+              A.SALE_AMT,
+              A.SALE_MANAGER,
+              TO_CHAR(A.SALE_REG_DATE  , 'MM/DD/YYYY') AS SALE_REG_DATE
+            FROM SALE_MNG A
+            WHERE 1 = 1 
+            ORDER BY A.SALE_REG_DATE DESC , RNUM DESC
+        ) AA
+        WHERE 1 = 1
+       <if test="saleDate != null and saleDate != ''"> 
+        AND  AA.SALE_DATE LIKE '%' || #{saleDate} || '%'
+       </if>
+       <if test="saleSite != null and saleSite != ''"> 
+        AND  AA.SALE_SITE LIKE '%' || #{saleSite} || '%'
+       </if>
+       <if test="saleItem != null and saleItem != ''"> 
+        AND  AA.SALE_ITEM LIKE '%' || #{saleItem} || '%'
+       </if>
+       <if test="saleAmt != null and saleAmt != ''"> 
+        AND  AA.SALE_AMT LIKE '%' || #{saleAmt} || '%'
+       </if>
+       <if test="saleManager != null and saleManager != ''"> 
+        AND  AA.SALE_MANAGER LIKE '%' || #{saleManager} || '%'
+       </if>
+       <if test="saleRegDate != null and saleRegDate != ''"> 
+        AND  AA.SALE_REG_DATE LIKE '%' || #{saleRegDate} || '%'
+       </if>
+     ) AAA
+     WHERE 1 = 1
+    <![CDATA[
+     AND AAA.NEW_RNUM >  #{totCntPerPage} * (#{currPage}-1) 
+    ]]>
+    <![CDATA[
+     AND AAA.NEW_RNUM <= #{totCntPerPage} * #{currPage}
+    ]]> 
+     ORDER BY AAA.NEW_RNUM ASC
+ </select> 
+
+
+ <!-- [SaleMng_SQL.xml][selectSaleMngListTotcnt] [SALE_MNG select list][ggh][2026. 03. 22.] -->
+  <select id="selectSaleMngListTotcnt" parameterType="java.util.HashMap" resultType="int"> 
+     SELECT /* [SaleMng_SQL.xml][selectSaleMngListTotcnt] */
+        COUNT(*) AS totcnt
+     FROM 
+     ( 
+        SELECT 
+        RNUM ,
+        ROWNUM AS NEW_RNUM ,
+        AA.SALE_DATE,
+        AA.SALE_SITE,
+        AA.SALE_ITEM,
+        AA.SALE_AMT,
+        AA.SALE_MANAGER,
+        AA.SALE_REG_DATE
+        FROM 
+        ( 
+           SELECT 
+              ROWNUM  RNUM , 
+              TO_CHAR(A.SALE_DATE  , 'MM/DD/YYYY') AS SALE_DATE,
+              A.SALE_SITE,
+              A.SALE_ITEM,
+              A.SALE_AMT,
+              A.SALE_MANAGER,
+              TO_CHAR(A.SALE_REG_DATE  , 'MM/DD/YYYY') AS SALE_REG_DATE
+           FROM SALE_MNG A
+           ORDER BY A.SALE_REG_DATE DESC
+         ) AA
+         WHERE 1 = 1
+        <if test="saleDate != null and saleDate != ''"> 
+         AND  SALE_DATE LIKE '%' || #{saleDate} || '%'
+        </if>
+        <if test="saleSite != null and saleSite != ''"> 
+         AND  SALE_SITE LIKE '%' || #{saleSite} || '%'
+        </if>
+        <if test="saleItem != null and saleItem != ''"> 
+         AND  SALE_ITEM LIKE '%' || #{saleItem} || '%'
+        </if>
+        <if test="saleAmt != null and saleAmt != ''"> 
+         AND  SALE_AMT LIKE '%' || #{saleAmt} || '%'
+        </if>
+        <if test="saleManager != null and saleManager != ''"> 
+         AND  SALE_MANAGER LIKE '%' || #{saleManager} || '%'
+        </if>
+        <if test="saleRegDate != null and saleRegDate != ''"> 
+         AND  SALE_REG_DATE LIKE '%' || #{saleRegDate} || '%'
+        </if>
+     ) AAA
+  </select> 
+
+
+ <!-- [SaleMng_SQL.xml][insertSaleMng] [SALE_MNG insert][ggh][2026. 03. 22.] -->
+  <insert id="insertSaleMng" parameterType="java.util.HashMap"> 
+     INSERT INTO /* [SaleMng_SQL.xml][insertSaleMng] */
+       SALE_MNG
+     (
+        SALE_DATE,
+        SALE_SITE,
+        SALE_ITEM,
+        SALE_AMT,
+        SALE_MANAGER,
+        SALE_REG_DATE
+     )
+     VALUES
+     (
+        TO_DATE(REPLACE(#{saleDate} , '/','') , 'MM/DD/YYYY'), 
+        #{saleSite}, 
+        #{saleItem}, 
+        #{saleAmt}, 
+        #{saleManager}, 
+        TO_DATE(REPLACE(#{saleRegDate} , '/','') , 'MM/DD/YYYY')
+     )
+  </insert>
+
+
+
+ <!-- [SaleMng_SQL.xml][updateSaleMng] [SALE_MNG update][ggh][2026. 03. 22.] -->
+  <update id="updateSaleMng" parameterType="java.util.HashMap"> 
+     UPDATE /* [SaleMng_SQL.xml][updateSaleMng] */
+        SALE_MNG
+     SET
+        SALE_DATE = TO_DATE(REPLACE(#{saleDate} , '/','') , 'MM/DD/YYYY'), 
+        SALE_SITE = #{saleSite},
+        SALE_ITEM = #{saleItem},
+        SALE_AMT = #{saleAmt},
+        SALE_MANAGER = #{saleManager},
+        SALE_REG_DATE = TO_DATE(#{saleRegDate} , 'MM/DD/YYYY') 
+     WHERE 1=1  
+    <if test="saleDateOld != null and saleDateOld != ''"> 
+     AND TO_CHAR(SALE_DATE, 'MMDDYYYY') = REPLACE( #{saleDateOld} , '/','')
+    </if>
+    <if test="saleSiteOld != null and saleSiteOld != ''"> 
+     AND SALE_SITE = #{saleSiteOld}
+    </if>
+    <if test="saleItemOld != null and saleItemOld != ''"> 
+     AND SALE_ITEM = #{saleItemOld}
+    </if>
+    <if test="saleAmtOld != null and saleAmtOld != ''"> 
+     AND SALE_AMT = #{saleAmtOld}
+    </if>
+    <if test="saleManagerOld != null and saleManagerOld != ''"> 
+     AND SALE_MANAGER = #{saleManagerOld}
+    </if>
+    <if test="saleRegDateOld != null and saleRegDateOld != ''"> 
+     AND TO_CHAR(SALE_REG_DATE, 'MMDDYYYY') = REPLACE( #{saleRegDateOld} , '/','')
+    </if>
+  </update>   
+
+
+
+ <!-- [SaleMng_SQL.xml][deleteSaleMng] [SALE_MNG delete][ggh][2026. 03. 22.] -->
+  <delete id="deleteSaleMng" parameterType="java.util.HashMap"> 
+     DELETE FROM /* [SaleMng_SQL.xml][deleteSaleMng] */
+       SALE_MNG
+     WHERE 1 = 1   
+    <if test="saleDate != null and saleDate!= ''"> 
+     AND TO_CHAR(SALE_DATE, 'MMDDYYYY') = REPLACE( #{saleDate} , '/','')
+    </if>
+    <if test="saleSite != null and saleSite!= ''"> 
+     AND SALE_SITE = #{saleSite}
+    </if>
+    <if test="saleItem != null and saleItem!= ''"> 
+     AND SALE_ITEM = #{saleItem}
+    </if>
+    <if test="saleAmt != null and saleAmt!= ''"> 
+     AND SALE_AMT = #{saleAmt}
+    </if>
+    <if test="saleManager != null and saleManager!= ''"> 
+     AND SALE_MANAGER = #{saleManager}
+    </if>
+    <if test="saleRegDate != null and saleRegDate!= ''"> 
+     AND TO_CHAR(SALE_REG_DATE, 'MMDDYYYY') = REPLACE( #{saleRegDate} , '/','')
+    </if>
+  </delete>   
+</mapper>   
+
+
